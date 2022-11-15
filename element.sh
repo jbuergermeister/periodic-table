@@ -8,8 +8,11 @@ then
 else
   CHECK_SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE symbol='$1';")
   CHECK_NAME=$($PSQL "SELECT name FROM elements WHERE name='$1';")
-  CHECK_ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE atomic_number=$1;")
-
+  if [[ $1 =~ ^[1-9]+$  ]]
+  then
+    CHECK_ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE atomic_number=$1;")
+  fi
+  
   if [[ ! -z $CHECK_ATOMIC_NUMBER ]]
   then
     RETRIEVE_INFO=$($PSQL "SELECT elements.atomic_number,name,symbol,type,atomic_mass,melting_point_celsius,boiling_point_celsius FROM elements JOIN properties ON elements.atomic_number=properties.atomic_number JOIN types ON properties.type_id=types.type_id WHERE elements.atomic_number=$1;")
